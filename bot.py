@@ -34,6 +34,30 @@ async def serverping(interaction: discord.Interaction):
     else:
         await interaction.response.send_message("API Alive!")
 
+
+@bot.tree.command(name="topnations", description="Get 25 nations with their networths")
+async def gettopnations(interaction: discord.Interaction):
+    reqRet = get(BASE_API_URL+"/list/nations")
+    if not reqRet.ok:
+        await interaction.response.send_message("Data Unavailable")
+        return
+    sendableEmbd = discord.Embed(
+        title="Nations Net Worths",
+        url=BASE_SITE_URL+"/stocks",
+        color=discord.colour.Colour(652800),
+    )
+    sendableEmbd.set_author(name='NWC Trade Thing Bot', url=BASE_SITE_URL, icon_url='https://finance.nwconifer.net/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fnwcx_Logo.91bd7b60.png&w=96&q=75')
+    nationNames = ""
+    netWorths = ""
+    theNations = reqRet.json()['Nations']
+    theNations.sort(reserve=True, key=lambda nation: nation['NetWorth'])
+    for i in theNations:
+        nationNames += (i['Name']+"\n")
+        netWorths += ("$"+str(i['NetWorth'])+"\n")
+    sendableEmbd.add_field(name="Nation Name", value=nationNames, inline=True)
+    sendableEmbd.add_field(name="Net Worth", value=netWorths, inline=True)
+    await interaction.response.send_message(embed=sendableEmbd)
+
 @bot.tree.command(name="allstocks", description="Get a list of all listed tickers and their prices")
 async def getallstocks(interaction: discord.Interaction):
     reqRet = get(BASE_API_URL+"/shares/quote")
@@ -57,7 +81,6 @@ async def getallstocks(interaction: discord.Interaction):
     sendableEmbd.add_field(name="Ticker", value=tickers, inline=True)
     sendableEmbd.add_field(name="Region", value=regions, inline=True)
     sendableEmbd.add_field(name="Market Price", value=prices, inline=True)
-    
     await interaction.response.send_message(embed=sendableEmbd)
 
 @bot.tree.command(name="quote", description="Get info for this ticker")
