@@ -35,10 +35,10 @@ async def serverping(interaction: discord.Interaction):
         await interaction.response.send_message("API Alive!")
 
 @bot.tree.command(name="allstocks", description="Get a list of all listed tickers and their prices")
-async def getallstocks(ctx: commands.Context):
+async def getallstocks(interaction: discord.Interaction):
     reqRet = get(BASE_API_URL+"/shares/quote")
     if not reqRet.ok:
-        await ctx.send("Data unavailable")
+        await interaction.response.send_message("Data unavailable")
         return
     sendableEmbd = discord.Embed(
         title="All Stocks Listed",
@@ -58,7 +58,7 @@ async def getallstocks(ctx: commands.Context):
     sendableEmbd.add_field(name="Region", value=regions, inline=True)
     sendableEmbd.add_field(name="Market Price", value=prices, inline=True)
     
-    await ctx.send(embed=sendableEmbd)
+    await interaction.response.send_message(embed=sendableEmbd)
 
 @bot.tree.command(name="quote", description="Get info for this ticker")
 async def getthisstock(interaction: discord.Interaction, ticker: str):
