@@ -1,0 +1,15 @@
+[Unit]
+Description=NWC Trade Bot
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=10
+User=root
+WorkingDirectory=/home/alicolliar
+ExecStart=python3 /home/alicolliar/nwc-trade-bot/bot.py
+
+[Install]
+WantedBy=multi-user.target

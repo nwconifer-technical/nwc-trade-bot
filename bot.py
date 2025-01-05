@@ -35,7 +35,7 @@ async def serverping(interaction: discord.Interaction):
         await interaction.response.send_message("API Alive!")
 
 @bot.tree.command(name="allstocks", description="Get a list of all listed tickers and their prices")
-async def getallstocks(interaction: discord.Interaction):
+async def getallstocks(ctx: commands.Context):
     reqRet = get(BASE_API_URL+"/shares/quote")
     if not reqRet.ok:
         await ctx.send("Data unavailable")
@@ -47,11 +47,18 @@ async def getallstocks(interaction: discord.Interaction):
     )
     sendableEmbd.set_author(name='NWC Trade Thing Bot', url=BASE_SITE_URL, icon_url='https://finance.nwconifer.net/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fnwcx_Logo.91bd7b60.png&w=96&q=75')
     sendingJS = reqRet.json()
-    useful = "Ticker - Market Price\n"
+    tickers = ""
+    regions = ""
+    prices = ""
     for stock in sendingJS['allStocks']:
-        useful += stock['ticker'] + " - " + str(stock['marketPrice']) + "\n"
-    sendableEmbd.description = useful
-    await interaction.response.send_message(embed=sendableEmbd)
+        tickers += (stock['ticker']+"\n")
+        regions += (stock['region']+"\n")
+        prices += (str(stock['marketPrice'])+"\n")
+    sendableEmbd.add_field(name="Ticker", value=tickers, inline=True)
+    sendableEmbd.add_field(name="Region", value=regions, inline=True)
+    sendableEmbd.add_field(name="Market Price", value=prices, inline=True)
+    
+    await ctx.send(embed=sendableEmbd)
 
 @bot.tree.command(name="quote", description="Get info for this ticker")
 async def getthisstock(interaction: discord.Interaction, ticker: str):
