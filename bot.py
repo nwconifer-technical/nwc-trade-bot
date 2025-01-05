@@ -50,7 +50,7 @@ async def gettopnations(interaction: discord.Interaction):
     nationNames = ""
     netWorths = ""
     theNations = reqRet.json()['Nations']
-    theNations.sort(reserve=True, key=lambda nation: nation['NetWorth'])
+    theNations.sort(reverse=True, key=lambda nation: nation['NetWorth'])
     for i in theNations:
         nationNames += (i['Name']+"\n")
         netWorths += ("$"+str(i['NetWorth'])+"\n")
